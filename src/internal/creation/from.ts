@@ -9,3 +9,4 @@ export const from = <T>(xs: Iterable<T>) =>
   });
 
 console.log(1);
+console.log(1);
