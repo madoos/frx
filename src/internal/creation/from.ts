@@ -7,3 +7,5 @@ export const from = <T>(xs: Iterable<T>) =>
     complete();
     return noop;
   });
+
+console.log('1');
