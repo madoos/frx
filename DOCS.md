@@ -4,6 +4,7 @@
 
 * observable
 * from
+* empty
 
 ### observable
 
@@ -70,4 +71,19 @@ num(
   e => console.log(e),
   () => console.log('Completed')
 );
+```
+
+## empty
+
+empty immediately completes.
+
+```ts
+import { empty } from '@madoos/frx/creation';
+
+empty(
+  console.log,
+  console.error,
+  () => console.log('Completed!')
+);
+
 ```
