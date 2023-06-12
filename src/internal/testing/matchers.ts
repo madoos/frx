@@ -32,13 +32,30 @@ expect.extend({
       emissions.push(complete());
     });
 
-    observable(next_, error_, complete_);
+    const handleExpect = () => {
+      try {
+        expect(emissions).toEqual(expected(next, error, complete));
+        return { pass: true, message: () => '' };
+      } catch (e: unknown) {
+        return {
+          pass: false,
+          message: () => (e as { message: string }).message,
+        };
+      }
+    };
 
-    try {
-      expect(emissions).toEqual(expected(next, error, complete));
-      return { pass: true, message: () => '' };
-    } catch (e: unknown) {
-      return { pass: false, message: () => (e as { message: string }).message };
-    }
+    return new Promise<void>((resolve) => {
+      observable(
+        next_,
+        (e) => {
+          error_(e);
+          resolve();
+        },
+        () => {
+          complete_();
+          resolve();
+        }
+      );
+    }).then(handleExpect);
   },
 });
