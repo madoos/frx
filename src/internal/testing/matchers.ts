@@ -5,16 +5,24 @@ export interface ObservableValue<T> {
   value?: T | unknown;
 }
 
-export type ObservableResult<T> = Array<ObservableValue<T>>;
+export type ExpectedObservableResult<T> = Array<ObservableValue<T>>;
 
 export type ExpectedObservable<T, E = unknown> = (
   next: (x: T) => ObservableValue<T>,
   error: (x: E) => ObservableValue<T>,
   complete: () => ObservableValue<T>
-) => ObservableResult<T>;
+) => ExpectedObservableResult<T>;
+
+export interface ToSubscribeOptions {
+  times: number;
+}
 
 expect.extend({
-  toSubscribe<T>(observable: Observable<T>, expected: ExpectedObservable<T>) {
+  toSubscribe<T>(
+    observable: Observable<T>,
+    expected: ExpectedObservable<T>,
+    options?: ToSubscribeOptions
+  ) {
     const next = (value: T): ObservableValue<T> => ({ type: 'next', value });
     const error = (e: unknown): ObservableValue<T> => ({
       type: 'error',
@@ -22,7 +30,8 @@ expect.extend({
     });
     const complete = (): ObservableValue<T> => ({ type: 'complete' });
 
-    const emissions: ObservableResult<T> = [];
+    const hasOptions = typeof options === 'object';
+    const emissions: ExpectedObservableResult<T> = [];
 
     const next_: Next<T> = jest.fn().mockImplementation((value) => {
       emissions.push(next(value));
@@ -48,7 +57,15 @@ expect.extend({
 
     return new Promise<void>((resolve) => {
       observable(
-        next_,
+        (val) => {
+          next_(val);
+          if (hasOptions) {
+            options.times--;
+            if (options.times === 0) {
+              resolve();
+            }
+          }
+        },
         (e) => {
           error_(e);
           resolve();
