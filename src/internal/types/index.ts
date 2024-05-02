@@ -23,3 +23,7 @@ export type Producer<T> = (
   error: Er,
   complete: Complete
 ) => Unsubscribe;
+
+export type Scheduler = (execute: () => void, delay: number) => Unsubscribe;
+
+export type Operator<I, O> = (src: Observable<I>) => Observable<O>;
