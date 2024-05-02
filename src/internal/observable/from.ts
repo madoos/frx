@@ -2,11 +2,9 @@ import { observable } from '.';
 import type { Observable } from '../types';
 import { noop, isIterable, isPromise, isString } from '../helpers';
 
-export const fromIterable = <T>(
-  xs: Iterable<T> | string
-): Observable<T | string> => {
-  return observable<T | string>((next, _error, complete) => {
-    for (const x of xs) {
+export const fromIterable = <T>(values: Iterable<T>): Observable<T> => {
+  return observable((next, error, complete) => {
+    for (const x of values) {
       next(x);
     }
     complete();
@@ -30,6 +28,9 @@ export const fromPromise = <T>(xs: Promise<T>) =>
     };
   });
 
+/**
+ * Creates an observable from an iterable or a promise.
+ */
 export const from = <T>(xs: Iterable<T> | Promise<T>) => {
   if (isIterable(xs) || isString(xs)) return fromIterable(xs);
   if (isPromise(xs)) return fromPromise(xs);
