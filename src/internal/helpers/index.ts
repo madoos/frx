@@ -28,3 +28,7 @@ export const isIterable = (x: any): x is Iterable<any> => {
 export const isString = (x: unknown): x is string => {
   return typeof x === 'string';
 };
+
+export const times = (f: () => void, n: number) => {
+  for (let i = 0; i < n; i++) f();
+};
