@@ -1,15 +1,21 @@
 import { observable } from '.';
+import type { Observable } from '../types';
 import { noop, isIterable, isPromise, isString } from '../helpers';
 
-export const fromIterable = <T>(xs: Iterable<T> | string) =>
-  observable<T | string, never>((next, _error, complete) => {
-    for (const x of xs) next(x);
+export const fromIterable = <T>(
+  xs: Iterable<T> | string
+): Observable<T | string> => {
+  return observable<T | string>((next, _error, complete) => {
+    for (const x of xs) {
+      next(x);
+    }
     complete();
     return noop;
   });
+};
 
 export const fromPromise = <T>(xs: Promise<T>) =>
-  observable<T, unknown>((next, error, complete) => {
+  observable<T>((next, error, complete) => {
     let canceled = false;
 
     xs.then((x) => {

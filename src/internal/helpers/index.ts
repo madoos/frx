@@ -2,12 +2,12 @@ export const noop = <T = void>(_x?: T): void => undefined;
 
 export const tryCatch = <O>(
   f: () => O,
-  handler: (e: any) => any,
+  handler: (e: unknown) => unknown,
   value: O
 ): O => {
   try {
     return f();
-  } catch (e: any) {
+  } catch (e: unknown) {
     handler(e);
     return value;
   }
@@ -25,6 +25,6 @@ export const isIterable = (x: any): x is Iterable<any> => {
   );
 };
 
-export const isString = (x: any): x is string => {
+export const isString = (x: unknown): x is string => {
   return typeof x === 'string';
 };

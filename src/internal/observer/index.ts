@@ -1,10 +1,10 @@
-import type { Next, Er, Complete } from '../../types/core';
+import type { Next, Er, Complete } from '../types';
 
-export const observer = <T, E>(
+export const observer = <T>(
   next: Next<T>,
-  error: Er<E>,
+  error: Er,
   complete: Complete
-): [Next<T>, Er<E>, Complete] => {
+): [Next<T>, Er, Complete] => {
   let isCompleted = false;
 
   return [

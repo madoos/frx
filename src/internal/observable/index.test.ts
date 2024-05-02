@@ -10,7 +10,7 @@ describe('Observable', () => {
       return noop;
     });
 
-    expect(numbers).toEmit((next, _error, complete) => [
+    expect(numbers).toSubscribe((next, _error, complete) => [
       next(1),
       next(2),
       complete(),
@@ -26,7 +26,7 @@ describe('Observable', () => {
       return noop;
     });
 
-    expect(numbers).toEmit((next, error) => [next(1), error('Oops!')]);
+    expect(numbers).toSubscribe((next, error) => [next(1), error('Oops!')]);
   });
 
   test('Should complete emission when complete is called', () => {
@@ -38,14 +38,17 @@ describe('Observable', () => {
       return noop;
     });
 
-    expect(numbers).toEmit((next, _error, complete) => [next(1), complete()]);
+    expect(numbers).toSubscribe((next, _error, complete) => [
+      next(1),
+      complete(),
+    ]);
   });
 
   test('Should handle errors in producer function', () => {
-    const numbers = observable((next, error, complete) => {
+    const numbers = observable(() => {
       throw '!Oops';
     });
 
-    expect(numbers).toEmit((_next, error) => [error('!Oops')]);
+    expect(numbers).toSubscribe((_next, error) => [error('!Oops')]);
   });
 });

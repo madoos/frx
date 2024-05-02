@@ -1,31 +1,33 @@
-import { Complete, Er, Next, Observable } from '../types/core';
-import { ExpectedObservable } from '../types/jest';
+import { Complete, Er, Next, Observable } from '../types';
 
-interface ObservableValue<T, E> {
+export interface ObservableValue<T> {
   type: 'next' | 'complete' | 'error';
-  value?: T | E;
+  value?: T | unknown;
 }
 
-type ObservableResult<T, E> = Array<ObservableValue<T, E>>;
+export type ObservableResult<T> = Array<ObservableValue<T>>;
+
+export type ExpectedObservable<T, E = unknown> = (
+  next: (x: T) => ObservableValue<T>,
+  error: (x: E) => ObservableValue<T>,
+  complete: () => ObservableValue<T>
+) => ObservableResult<T>;
 
 expect.extend({
-  toEmit<T, E>(
-    observable: Observable<T, E>,
-    expected: ExpectedObservable<T, E>
-  ) {
-    const next = (value: T): ObservableValue<T, E> => ({ type: 'next', value });
-    const error = (e: E): ObservableValue<T, E> => ({
+  toSubscribe<T>(observable: Observable<T>, expected: ExpectedObservable<T>) {
+    const next = (value: T): ObservableValue<T> => ({ type: 'next', value });
+    const error = (e: unknown): ObservableValue<T> => ({
       type: 'error',
       value: e,
     });
-    const complete = (): ObservableValue<T, E> => ({ type: 'complete' });
+    const complete = (): ObservableValue<T> => ({ type: 'complete' });
 
-    const emissions: ObservableResult<T, E> = [];
+    const emissions: ObservableResult<T> = [];
 
     const next_: Next<T> = jest.fn().mockImplementation((value) => {
       emissions.push(next(value));
     });
-    const error_: Er<E> = jest.fn().mockImplementation((e) => {
+    const error_: Er = jest.fn().mockImplementation((e) => {
       emissions.push(error(e));
     });
     const complete_: Complete = jest.fn().mockImplementation(() => {

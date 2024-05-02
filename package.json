@@ -18,21 +18,6 @@
       "node": "./dist/cjs/index.js",
       "require": "./dist/cjs/index.js",
       "default": "./dist/esm/index.js"
-    },
-    "creation": {
-      "node": "./dist/cjs/creation/index.js",
-      "require": "./dist/cjs/creation/index.js",
-      "default": "./dist/esm/creation/index.js"
-    },
-    "combination": {
-      "node": "./dist/cjs/combination/index.js",
-      "require": "./dist/cjs/combination/index.js",
-      "default": "./dist/esm/combination/index.js"
-    },
-    "operators": {
-      "node": "./dist/cjs/operators/index.js",
-      "require": "./dist/cjs/operators/index.js",
-      "default": "./dist/esm/operators/index.js"
     }
   },
   "scripts": {
@@ -41,7 +26,6 @@
     "format": "lint-staged",
     "prepare": "husky install",
     "compile": "tsc -b ./src/tsconfig.cjs.json ./src/tsconfig.esm.json ./src/tsconfig.types.json"
-
   },
   "keywords": [],
   "author": "Maurice Dominguez <maurice.ronet.dominguez@gmail.com>",
