@@ -19,9 +19,10 @@ export const isPromise = (x: any): x is Promise<any> => {
 
 export const isIterable = (x: any): x is Iterable<any> => {
   return (
-    x !== null &&
-    typeof x === 'object' &&
-    typeof x[Symbol.iterator] === 'function'
+    isString(x) ||
+    (x !== null &&
+      typeof x === 'object' &&
+      typeof x[Symbol.iterator] === 'function')
   );
 };
 

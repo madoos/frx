@@ -32,7 +32,7 @@ export const fromPromise = <T>(xs: Promise<T>) =>
  * Creates an observable from an iterable or a promise.
  */
 export const from = <T>(xs: Iterable<T> | Promise<T>) => {
-  if (isIterable(xs) || isString(xs)) return fromIterable(xs);
+  if (isIterable(xs)) return fromIterable(xs);
   if (isPromise(xs)) return fromPromise(xs);
   throw new Error('Value must to be an Iterable or Promise');
 };
