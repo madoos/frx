@@ -18,6 +18,21 @@
       "node": "./dist/cjs/index.js",
       "require": "./dist/cjs/index.js",
       "default": "./dist/esm/index.js"
+    },
+    "observable": {
+      "node": "./dist/cjs/observable.js",
+      "require": "./dist/cjs/observable.js",
+      "default": "./dist/esm/observable.js"
+    },
+    "scheduler": {
+      "node": "./dist/cjs/scheduler.js",
+      "require": "./dist/cjs/scheduler.js",
+      "default": "./dist/esm/scheduler.js"
+    },
+    "operators": {
+      "node": "./dist/cjs/operators.js",
+      "require": "./dist/cjs/operators.js",
+      "default": "./dist/esm/operators.js"
     }
   },
   "scripts": {
