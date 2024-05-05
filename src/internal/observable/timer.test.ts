@@ -6,8 +6,8 @@ describe('observer/timer', () => {
     const scheduler = createSyncScheduler({ times: 1 });
     const src = timer(100, scheduler);
 
-    return expect(src).toSubscribe((_next, _error, complete) => {
-      return [complete()];
+    return expect(src).toSubscribe((next, _error, complete) => {
+      return [next(0), complete()];
     });
   });
 });
