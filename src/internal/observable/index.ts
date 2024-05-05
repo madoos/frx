@@ -1,15 +1,20 @@
-import type { Producer, Observable } from '../types';
+import type { Producer, Observable, Unsubscribe } from '../types';
 import { observer } from '../observer';
-import { noop, tryCatch } from '../helpers';
+import { noop } from '../helpers';
 
 export const observable =
   <T>(producer: Producer<T>): Observable<T> =>
   (next = noop<T>, error = noop, complete = noop<void>) => {
-    const [next_, error_, complete_] = observer(next, error, complete);
+    let unsubscribe: Unsubscribe = noop;
 
-    return tryCatch(
-      () => producer(next_, error_, complete_),
-      (e) => error_(e),
-      noop
+    const [next_, error_, _complete_] = observer(
+      next,
+      error,
+      complete,
+      unsubscribe
     );
+
+    unsubscribe = producer(next_, error_, _complete_);
+
+    return unsubscribe;
   };
