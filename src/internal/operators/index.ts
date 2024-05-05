@@ -34,5 +34,5 @@ export const pipe: {
     op4: Operator<D, E>
   ): Operator<A, E>;
 } = (...operators: Operator<unknown, unknown>[]) => {
-  return operators.reduce((f, g) => pipe2(f, g), identity);
+  return operators.reduce(pipe2, identity);
 };

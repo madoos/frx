@@ -3,3 +3,4 @@ export * from './internal/operators/identity';
 export * from './internal/operators/map';
 export * from './internal/operators/tap';
 export * from './internal/operators/catchError';
+export * from './internal/operators/concat';
