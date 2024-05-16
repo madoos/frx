@@ -10,7 +10,12 @@ export const observer = <T>(
 
   const ensureNext = (val: T) => {
     if (isCompleted) return;
-    next(val);
+
+    try {
+      next(val);
+    } catch (e) {
+      ensureError(e);
+    }
   };
 
   const ensureError = (e: unknown) => {

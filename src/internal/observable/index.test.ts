@@ -1,54 +1,64 @@
+import { marble } from '../testing';
 import { observable } from '.';
 import { noop } from '../helpers';
 
 describe('Observable', () => {
-  test('Should emit values and complete', () => {
-    const numbers = observable((next, _error, complete) => {
-      next(1);
-      next(2);
-      complete();
-      return noop;
-    });
+  test(
+    'Should emit values and complete',
+    marble(({ expectObservable }) => {
+      const values = { a: 1, b: 2 };
 
-    expect(numbers).toSubscribe((next, _error, complete) => [
-      next(1),
-      next(2),
-      complete(),
-    ]);
-  });
+      const numbers = observable((next, _error, complete) => {
+        next(values.a);
+        next(values.b);
+        complete();
+        return noop;
+      });
 
-  test('Should close emission when an error occurs', () => {
-    const numbers = observable((next, error, complete) => {
-      next(1);
-      error('Oops!');
-      next(2);
-      complete();
-      return noop;
-    });
+      expectObservable(numbers).toBe('(ab|)', values);
+    })
+  );
 
-    expect(numbers).toSubscribe((next, error) => [next(1), error('Oops!')]);
-  });
+  test(
+    'Should close emission when an error occurs',
+    marble(({ expectObservable }) => {
+      const values = { a: 1, b: 2 };
 
-  test('Should complete emission when complete is called', () => {
-    const numbers = observable((next, error, complete) => {
-      next(1);
-      complete();
-      error('Oops!');
-      next(2);
-      return noop;
-    });
+      const numbers = observable((next, error) => {
+        next(values.a);
+        error(new Error());
+        next(values.b); // This emission will not happen because of the error
+        return noop;
+      });
 
-    expect(numbers).toSubscribe((next, _error, complete) => [
-      next(1),
-      complete(),
-    ]);
-  });
+      expectObservable(numbers).toBe('(a#)', values, new Error());
+    })
+  );
 
-  test('Should handle errors in producer function', () => {
-    const numbers = observable(() => {
-      throw '!Oops';
-    });
+  test(
+    'Should complete emission when complete is called',
+    marble(({ expectObservable }) => {
+      const values = { a: 1, b: 2 };
 
-    expect(numbers).toSubscribe((_next, error) => [error('!Oops')]);
-  });
+      const numbers = observable((next, _error, complete) => {
+        next(values.a);
+        complete();
+        next(values.b); // This emission will not happen because of the complete
+        return noop;
+      });
+
+      expectObservable(numbers).toBe('(a|)', values);
+    })
+  );
+
+  test(
+    'Should handle errors in producer function',
+    marble(({ expectObservable }) => {
+      const numbers = observable(() => {
+        throw new Error();
+      });
+
+      expectObservable(numbers).toBe('#', undefined, new Error());
+    })
+  );
 });

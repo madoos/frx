@@ -1,7 +1,11 @@
 import { empty } from './empty';
+import { marble } from '../testing';
 
 describe('observable/empty', () => {
-  test('should not emit values', () => {
-    expect(empty).toSubscribe((_next, _error, completed) => [completed()]);
-  });
+  test(
+    'should not emit values',
+    marble(({ expectObservable }) => {
+      expectObservable(empty).toBe('|');
+    })
+  );
 });

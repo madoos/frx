@@ -1,42 +1,38 @@
 import { applyTo, pipe } from '.';
-import { from } from '../observable/from';
 import { map } from './map';
+import { marble } from '../testing';
 
-describe('should apply an operator to an observable', () => {
-  it('should compose operators', () => {
-    const numbers = from([1, 2, 3]);
+describe('operators/apply', () => {
+  it(
+    'should apply operator',
+    marble(({ cold, expectObservable }) => {
+      const numbers = cold('a-b-c-|', { a: 1, b: 2, c: 3 });
 
-    const applied = applyTo(
-      numbers,
-      map((n) => String(n))
-    );
+      const applied = applyTo(
+        numbers,
+        map((n: number) => String(n))
+      );
 
-    expect(applied).toSubscribe((next, _error, complete) => [
-      next('1'),
-      next('2'),
-      next('3'),
-      complete(),
-    ]);
-  });
+      expectObservable(applied).toBe('a-b-c-|', { a: '1', b: '2', c: '3' });
+    })
+  );
 });
 
-describe('Operators/pipe', () => {
-  it('should compose operators', () => {
-    const numbers = from([1, 2, 3]);
+describe('operators/pipe', () => {
+  it(
+    'should compose operators',
+    marble(({ cold, expectObservable }) => {
+      const numbers = cold('a-b-c-|', { a: 1, b: 2, c: 3 });
 
-    const operator = pipe(
-      map((n: number) => n + 1),
-      map((n) => String(n)),
-      map((s) => [s])
-    );
+      const operator = pipe(
+        map((n: number) => n + 1),
+        map((n) => String(n)),
+        map((s) => [s])
+      );
 
-    const piped = operator(numbers);
+      const piped = operator(numbers);
 
-    expect(piped).toSubscribe((next, _error, complete) => [
-      next(['2']),
-      next(['3']),
-      next(['4']),
-      complete(),
-    ]);
-  });
+      expectObservable(piped).toBe('a-b-c-|', { a: ['2'], b: ['3'], c: ['4'] });
+    })
+  );
 });

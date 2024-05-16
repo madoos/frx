@@ -1,24 +1,24 @@
-import { noop } from '../helpers';
-import { observable } from '../observable';
-import { from } from '../observable/from';
+import { marble } from '../testing';
 import { catchError } from './catchError';
 
-describe('catchError', () => {
-  it('should catch errors', () => {
-    const src = observable<number>((next, error) => {
-      next(1);
-      error(new Error());
-      return noop;
-    });
+describe('operators/catchError', () => {
+  it(
+    'should catch errors',
+    marble(({ cold, expectObservable }) => {
+      const values = {
+        src: { a: 1, b: 2 },
+        errorHandling: { c: 3, d: 4 },
+      };
 
-    const handleError = catchError(() => from([2, 3]));
-    const handled = handleError(src);
+      const src = cold('a-b-#', values.src, new Error());
 
-    expect(handled).toSubscribe((next, _error, complete) => [
-      next(1),
-      next(2),
-      next(3),
-      complete(),
-    ]);
-  });
+      const handleError = catchError(() => cold('c-d-|', values.errorHandling));
+      const handled = handleError(src);
+
+      expectObservable(handled).toBe('a-b-c-d-|', {
+        ...values.src,
+        ...values.errorHandling,
+      });
+    })
+  );
 });

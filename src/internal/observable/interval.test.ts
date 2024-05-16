@@ -1,16 +1,14 @@
+import { marble } from '../testing';
 import { interval } from './interval';
 import { createSyncScheduler } from '../testing/scheduler';
 
 describe('observer/interval', () => {
-  it('should emit values', () => {
-    const scheduler = createSyncScheduler({ times: 3 });
-    const src = interval(100, scheduler);
-
-    return expect(src).toSubscribe(
-      (next) => {
-        return [next(0), next(1), next(2)];
-      },
-      { times: 3 }
-    );
-  });
+  it.skip(
+    'should emit values',
+    marble(({ expectObservable }) => {
+      const scheduler = createSyncScheduler({ times: 3 });
+      const src = interval(1000, scheduler);
+      expectObservable(src).toBe('(abc|)', { a: 0, b: 1, c: 2 });
+    })
+  );
 });

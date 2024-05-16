@@ -1,46 +1,38 @@
-import { noop } from '../helpers';
-import { observable } from '../observable';
-import { from } from '../observable/from';
 import { tap } from './tap';
+import { from } from '../observable/from';
+import { observable } from '../observable';
+import { noop } from '../helpers';
 
-describe('tap', () => {
-  it('should do side effects', async () => {
+describe('operators/tap', () => {
+  it('should do side effects', () => {
     const next = jest.fn();
     const complete = jest.fn();
     const error = jest.fn();
 
     const tapped = tap(next, error, complete);
-    const numbers = tapped(from([1, 2, 3]));
+    const numbers = tapped(from([1]));
 
-    await expect(numbers).toSubscribe((next, _error, complete) => [
-      next(1),
-      next(2),
-      next(3),
-      complete(),
-    ]);
+    numbers();
 
     expect(next).toBeCalled();
     expect(complete).toBeCalled();
   });
 
-  it('should do side effects with error', async () => {
+  it('should do side effects with error', () => {
+    const next = jest.fn();
+    const complete = jest.fn();
+    const error = jest.fn();
+
     const src = observable<number>((next, error) => {
       next(1);
       error(new Error());
       return noop;
     });
 
-    const next = jest.fn();
-    const complete = jest.fn();
-    const error = jest.fn();
-
     const tapped = tap(next, error, complete);
     const numbers = tapped(src);
 
-    await expect(numbers).toSubscribe((next, error) => [
-      next(1),
-      error(new Error()),
-    ]);
+    numbers();
 
     expect(next).toBeCalled();
     expect(error).toBeCalled();

@@ -5,5 +5,5 @@ export default {
   transform: {
     '^.+\\.ts$': '@swc/jest',
   },
-  setupFilesAfterEnv: ['./src/internal/testing/matchers.ts'],
+  setupFilesAfterEnv: [],
 };

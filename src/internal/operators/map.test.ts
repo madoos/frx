@@ -1,32 +1,30 @@
-import { from } from '../observable/from';
+import { marble } from '../testing';
 import { map } from './map';
 
-describe('Operators/map', () => {
-  it('should map values', () => {
-    const numbers = from([1, 2, 3]);
-    const inc = map((n: number) => n + 1);
-    const mapped = inc(numbers);
+describe('operators/map', () => {
+  it(
+    'should map values',
+    marble(({ cold, expectObservable }) => {
+      const numbers = cold('a-b-c-|', { a: 1, b: 2, c: 3 });
+      const inc = map((n: number) => n + 1);
+      const mapped = inc(numbers);
 
-    expect(mapped).toSubscribe((next, _error, complete) => [
-      next(2),
-      next(3),
-      next(4),
-      complete(),
-    ]);
-  });
+      expectObservable(mapped).toBe('x-y-z-|', { x: 2, y: 3, z: 4 });
+    })
+  );
 
-  it('should capture errors', () => {
-    const numbers = from([1, 2, 3]);
-    const expectedError = new Error('oops!');
-    const inc = map((n: number) => {
-      if (n === 2) throw expectedError;
-      else return n + 1;
-    });
-    const mapped = inc(numbers);
+  it(
+    'should capture errors',
+    marble(({ cold, expectObservable }) => {
+      const numbers = cold('a-b-c-|', { a: 1, b: 2, c: 3 });
 
-    expect(mapped).toSubscribe((next, error) => [
-      next(2),
-      error(expectedError),
-    ]);
-  });
+      const unsafeInc = map((n: number) => {
+        if (n === 3) throw new Error();
+        else return n + 1;
+      });
+      const mapped = unsafeInc(numbers);
+
+      expectObservable(mapped).toBe('a-b-#', { a: 2, b: 3 }, new Error());
+    })
+  );
 });

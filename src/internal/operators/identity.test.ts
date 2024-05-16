@@ -1,15 +1,14 @@
-import { from } from '../observable/from';
 import { identity } from './identity';
+import { marble } from '../testing';
 
-describe('identity', () => {
-  it('should return the input observable as is', () => {
-    const src = from([1, 2, 3]);
-
-    expect(identity(src)).toSubscribe((next, _error, complete) => [
-      next(1),
-      next(2),
-      next(3),
-      complete(),
-    ]);
-  });
+describe('operators/identity', () => {
+  it(
+    'should return the input observable as is',
+    marble(({ cold, expectObservable }) => {
+      const values = { a: 1, b: 2, c: 3 };
+      const src = cold('a-b-c-|', values);
+      const result = identity(src);
+      expectObservable(result).toBe('a-b-c-|', values);
+    })
+  );
 });

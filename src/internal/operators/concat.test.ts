@@ -1,24 +1,27 @@
-import { from } from '../observable/from';
 import { concat } from './concat';
+import { marble } from '../testing';
 
-describe('concat', () => {
-  it('should concat observables sequential', () => {
-    const numbers = from([1, 2, 3]);
-    const letters = from(['a', 'b', 'c']);
-    const booleans = from([true, false]);
+describe('operators/concat', () => {
+  it(
+    'should concat observables sequential',
+    marble(({ cold, expectObservable }) => {
+      const values = {
+        numbers: { a: 1, b: 2, c: 3 },
+        letters: { d: 'a', e: 'b', f: 'c' },
+        booleans: { g: true, h: false },
+      };
 
-    const all = concat(numbers, letters, booleans);
+      const numbers = cold('a-b-c-|', values.numbers);
+      const letters = cold('d-e-f-|', values.letters);
+      const booleans = cold('g-h-|', values.booleans);
 
-    expect(all).toSubscribe((next, _error, complete) => [
-      next(1),
-      next(2),
-      next(3),
-      next('a'),
-      next('b'),
-      next('c'),
-      next(true),
-      next(false),
-      complete(),
-    ]);
-  });
+      const all = concat(numbers, letters, booleans);
+
+      return expectObservable(all).toBe('a-b-c-d-e-f-g-h-|', {
+        ...values.numbers,
+        ...values.letters,
+        ...values.booleans,
+      });
+    })
+  );
 });
