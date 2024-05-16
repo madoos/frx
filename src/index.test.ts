@@ -23,6 +23,7 @@ describe('public api', () => {
       'tap',
       'catchError',
       'concat',
+      'merge',
     ]);
   });
 
@@ -52,6 +53,7 @@ describe('public api', () => {
       'tap',
       'catchError',
       'concat',
+      'merge',
     ]);
   });
 
